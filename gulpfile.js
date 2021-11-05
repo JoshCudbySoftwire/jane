@@ -10,7 +10,7 @@ gulp.task('build', function() {
 
 gulp.task('dev', gulp.series('build', function() {
     return nodemon({
-        script: 'dist/jane.js',
+        script: 'dist/index.js',
         ext: 'js',
         ignore: ['dist/'],
         env: { 'NODE_ENV': 'development' },
