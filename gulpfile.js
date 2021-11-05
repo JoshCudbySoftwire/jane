@@ -3,16 +3,16 @@ var nodemon = require('gulp-nodemon');
 var babel = require("gulp-babel");
 
 gulp.task('build', function() {
-  return gulp.src("week4/src/**/*.js")
+  return gulp.src("src/**/*.js")
     .pipe(babel())
-    .pipe(gulp.dest("week4/dist"));
+    .pipe(gulp.dest("dist"));
 });
 
 gulp.task('dev', gulp.series('build', function() {
     return nodemon({
-        script: 'week4/dist/jane.js',
+        script: 'dist/jane.js',
         ext: 'js',
-        ignore: ['week4/dist/'],
+        ignore: ['dist/'],
         env: { 'NODE_ENV': 'development' },
         tasks: ['build']
     });

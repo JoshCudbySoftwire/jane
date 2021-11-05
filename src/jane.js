@@ -1,27 +1,38 @@
 import sharp from "sharp";
 import fs from "fs";
-const prompt = require("prompt-sync")();
+import readline from "readline";
 
 const circleMask = Buffer.from(
-    '<svg><rect x="0" y="0" width="200" height="200" rx="100" ry="100"/></svg>'
+	'<svg><rect x="0" y="0" width="200" height="200" rx="100" ry="100"/></svg>'
 )
 
-const roundedCornerResizer =
-  sharp()
-    .resize(200, 200)
-    .composite([{
-      input: circleMask,
-      blend: 'dest-in'
-    }])
-    .png();
+const roundedCornerResizer = sharp()
+	.resize(200, 200)
+	.composite([{
+		input: circleMask,
+		blend: 'dest-in'
+	}])
+	.png();
 
 
-let filename = ""
-console.log('About to prompt')
-filename = prompt(`Hello, input please: `);
-console.log(`${filename} is the file`)
+const rl = readline.createInterface(({
+	input: process.stdin,
+	output: process.stdout,
+	terminal: false
+}));
 
-const readableStream = fs.createReadStream(filename)
-const writableStream = fs.createWriteStream("week4/src/output.png")
+const roundify = (file) => {
+	const inputFile = `input/${file}`;
+	const outputFile = `output/${inputFile}.rounded.png`
+	const stream = fs.createReadStream(inputFile)
+		.pipe(roundedCornerResizer)
+		.pipe(fs.createWriteStream(outputFile));
 
-readableStream.pipe(roundedCornerResizer).pipe(writableStream)
+	stream.on("finish", () => {
+		console.log("Success!");
+		rl.close();
+	});
+	stream.on("error", (error) => console.log(`Oh no! My error: ${error}`))
+}
+
+rl.question("File to roundify: ", roundify);
